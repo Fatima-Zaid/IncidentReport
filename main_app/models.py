@@ -103,34 +103,24 @@ class AuditLog(models.Model):
         User,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        related_name='audit_logs'
     )
 
     incident = models.ForeignKey(
         Incident,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        related_name='audit_logs'
     )
 
-    action = models.CharField(
-        max_length=20,
-        choices=ACTION_CHOICES
-    )
-
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
     status = models.CharField(max_length=20)
-
-    ip_address = models.GenericIPAddressField(
-        null=True,
-        blank=True
-    )
-
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-
     details = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - {self.action} - {self.status} at {self.timestamp}"
 
-    class Meta:
-        ordering = ['-timestamp']
