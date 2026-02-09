@@ -13,4 +13,7 @@ urlpatterns = [
     path("incidents/<int:pk>/", views.incident_detail, name="incident_detail"),
     path("incidents/<int:pk>/update/", views.incident_update, name="incident_update"),
     path("incidents/<int:pk>/delete/", views.incident_delete, name="incident_delete"),
+
+    path("audit-logs/", views.audit_log_list, name="audit_log_list"),
+    path("audit-logs/<int:pk>/", views.audit_log_detail, name="audit_log_detail"),
 ]

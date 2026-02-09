@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Audit Log #{{ log.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col s12 m10 offset-m1 l8 offset-l2">
+    <h4>Audit Log #{{ log.id }}</h4>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="col s12 m6">
+            <p><strong>Timestamp:</strong></p>
+            <p>{{ log.timestamp|date:"F d, Y H:i:s" }}</p>
+          </div>
+          <div class="col s12 m6">
+            <p><strong>User:</strong></p>
+            <p>
+              {% if log.user %}
+                {{ log.user.username }} ({{ log.user.email }})
+              {% else %}
+                <span class="grey-text">Anonymous / System</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12 m6">
+            <p><strong>Action:</strong></p>
+            <p><span class="badge blue darken-2 white-text">{{ log.get_action_display }}</span></p>
+          </div>
+          <div class="col s12 m6">
+            <p><strong>Status:</strong></p>
+            <p>
+              {% if log.status == 'success' %}
+                <span class="badge green white-text">Success</span>
+              {% else %}
+                <span class="badge red white-text">Failed</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12 m6">
+            <p><strong>IP Address:</strong></p>
+            <p>{{ log.ip_address|default:"N/A" }}</p>
+          </div>
+          <div class="col s12 m6">
+            <p><strong>Related Incident:</strong></p>
+            <p>
+              {% if log.incident %}
+                <a href="{% url 'incident_detail' log.incident.pk %}" class="blue-text">
+                  Incident #{{ log.incident.id }} - {{ log.incident.malicious_url|truncatewords:5 }}
+                </a>
+              {% else %}
+                <span class="grey-text">N/A</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% if log.details %}
+        <div class="row">
+          <div class="col s12">
+            <p><strong>Details:</strong></p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
+              <p style="margin: 0;">{{ log.details }}</p>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card-action">
+        <a href="{% url 'audit_log_list' %}" class="btn blue darken-2">Back to Audit Logs</a>
+        {% if log.incident %}
+          <a href="{% url 'incident_detail' log.incident.pk %}" class="btn orange">View Incident</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

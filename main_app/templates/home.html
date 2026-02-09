@@ -68,6 +68,20 @@
               </div>
             </div>
           </div>
+          <div class="col s12 m6 l4">
+  <div class="card hoverable">
+    <div class="card-content center-align">
+      <i class="material-icons large red-text text-darken-2">history</i>
+      <h5>Audit Logs</h5>
+      <p>View all system activity and security logs.</p>
+    </div>
+    <div class="card-action center-align">
+      <a href="{% url 'audit_log_list' %}" class="btn red darken-2 waves-effect waves-light">
+        <i class="material-icons left">assignment</i>View Logs
+      </a>
+    </div>
+  </div>
+</div>
 
         {% else %}
           <!-- Regular User Actions -->
