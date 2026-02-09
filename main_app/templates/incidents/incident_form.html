@@ -13,25 +13,59 @@
           {% csrf_token %}
 
           {% for field in form %}
-            <div class="input-field">
-              {{ field }}
-              <label for="{{ field.id_for_label }}" class="{% if field.value %}active{% endif %}">{{ field.label }}</label>
-
-              {% if field.errors %}
-                <span class="helper-text red-text">
-                  {% for error in field.errors %}
-                    {{ error }}
-                  {% endfor %}
-                </span>
-              {% endif %}
-
-              {% if field.help_text %}
-                <span class="helper-text">{{ field.help_text }}</span>
-              {% endif %}
-            </div>
+            {% if field.name == 'is_active' %}
+              <!-- Active Status Checkbox with extra spacing -->
+              <div class="section" style="margin-top: 30px;">
+                <label>
+                  {{ field }}
+                  <span>{{ field.label }}</span>
+                </label>
+                {% if field.errors %}
+                  <span class="helper-text red-text">
+                    {% for error in field.errors %}{{ error }}{% endfor %}
+                  </span>
+                {% endif %}
+                {% if field.help_text %}
+                  <span class="helper-text">{{ field.help_text }}</span>
+                {% endif %}
+              </div>
+            {% elif field.name == 'screenshot' %}
+              <!-- Screenshot Field with extra spacing -->
+              <div class="file-field input-field" style="margin-top: 30px;">
+                <div class="btn blue darken-2">
+                  <span>Upload Screenshot</span>
+                  {{ field }}
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" placeholder="Optional">
+                </div>
+                {% if field.errors %}
+                  <span class="helper-text red-text">
+                    {% for error in field.errors %}{{ error }}{% endfor %}
+                  </span>
+                {% endif %}
+                {% if field.help_text %}
+                  <span class="helper-text">{{ field.help_text }}</span>
+                {% endif %}
+              </div>
+            {% else %}
+              <!-- Regular fields -->
+              <div class="input-field" style="margin-top: 20px;">
+                {{ field }}
+                <label for="{{ field.id_for_label }}" class="{% if field.value %}active{% endif %}">{{ field.label }}</label>
+                {% if field.errors %}
+                  <span class="helper-text red-text">
+                    {% for error in field.errors %}{{ error }}{% endfor %}
+                  </span>
+                {% endif %}
+                {% if field.help_text %}
+                  <span class="helper-text">{{ field.help_text }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
           {% endfor %}
 
-          <div class="card-action">
+          <div class="card-action" style="margin-top: 30px;">
             <button type="submit" class="btn blue darken-2 waves-effect waves-light">
               <i class="material-icons left">save</i>{{ action }}
             </button>
@@ -47,7 +81,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('select');
-    var instances = M.FormSelect.init(elems);
+    M.FormSelect.init(elems);
   });
 </script>
 {% endblock %}

@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Incidents{% endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col s12">
     <h4>
-      {% if user.is_superuser %} All Incidents (Admin View) {% else %} My
-      Incidents {% endif %}
+      {% if user.is_superuser %}
+        All Incidents (Admin View)
+      {% else %}
+        My Incidents
+      {% endif %}
     </h4>
 
     {% if not user.is_superuser %}
@@ -14,10 +18,13 @@
         href="{% url 'incident_create' %}"
         class="btn blue darken-2 waves-effect waves-light"
       >
-        <i class="material-icons left">add</i>Create New Incident
+        <i class="material-icons left">add</i>
+        Create New Incident
       </a>
     </div>
-    {% endif %} {% if incidents %}
+    {% endif %}
+
+    {% if incidents %}
     <table class="striped responsive-table">
       <thead>
         <tr>
@@ -30,57 +37,73 @@
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
         {% for incident in incidents %}
         <tr>
           <td>{{ incident.id }}</td>
           <td>{{ incident.malicious_url|truncatewords:5 }}</td>
+
+          <!-- Severity -->
           <td>
-            <span
-              class="badge {% if incident.severity == 'CRITICAL' %}red {% elif incident.severity == 'HIGH' %}orange {% elif incident.severity == 'MEDIUM' %}yellow black-text {% else %}green {% endif %}"
-            >
+            <span class="badge white-text
+              {% if incident.severity == 'CRITICAL' %}red
+              {% elif incident.severity == 'HIGH' %}orange
+              {% elif incident.severity == 'MEDIUM' %}amber
+              {% else %}green{% endif %}">
               {{ incident.get_severity_display }}
             </span>
           </td>
+
           <td>{{ incident.created_by.username }}</td>
           <td>{{ incident.created_at|date:"M d, Y H:i" }}</td>
+
+          <!-- Status -->
           <td>
             {% if incident.is_active %}
-            <span class="badge green">Active</span>
+              <span class="badge green white-text">Active</span>
             {% else %}
-            <span class="badge grey">Inactive</span>
+              <span class="badge grey darken-1 white-text">Inactive</span>
             {% endif %}
           </td>
+
+          <!-- Actions -->
           <td>
             <a
               href="{% url 'incident_detail' incident.pk %}"
               class="btn-small blue darken-2"
-              >View</a
             >
+              View
+            </a>
+
             {% if user.is_superuser %}
             <a
               href="{% url 'incident_update' incident.pk %}"
               class="btn-small orange"
-              >Edit</a
             >
+              Edit
+            </a>
             <a
               href="{% url 'incident_delete' incident.pk %}"
               class="btn-small red"
-              >Delete</a
             >
+              Delete
+            </a>
             {% endif %}
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
     {% else %}
     <div class="card-panel center-align">
       <p class="flow-text">No incidents found.</p>
+
       {% if not user.is_superuser %}
-      <a href="{% url 'incident_create' %}" class="btn blue darken-2"
-        >Create Your First Incident</a
-      >
+      <a href="{% url 'incident_create' %}" class="btn blue darken-2">
+        Create Your First Incident
+      </a>
       {% endif %}
     </div>
     {% endif %}

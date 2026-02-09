@@ -1,18 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.core.paginator import Paginator
 
-from .forms import RegisterForm, IncidentForm, IncidentUpdateForm
-from .models import Incident, AuditLog
-from .utils import create_audit_log
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.signals import user_logged_in, user_login_failed
+from django.dispatch import receiver
+
+from .forms import RegisterForm, IncidentForm, IncidentUpdateForm
+from .models import Incident, AuditLog
+from .utils import create_audit_log, get_client_ip
+
 
 
 # Helper function to check if user is superuser
@@ -58,6 +59,30 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, "registration/register.html", {"form": form})
+
+
+# Successful login
+@receiver(user_logged_in)
+def log_user_logged_in(sender, request, user, **kwargs):
+    AuditLog.objects.create(
+        user=user,
+        action="LOGIN_SUCCESS",
+        status="success",
+        ip_address=get_client_ip(request),
+        details=f"User logged in: {user.username}",
+    )
+
+
+# Failed login
+@receiver(user_login_failed)
+def log_user_login_failed(sender, credentials, request, **kwargs):
+    AuditLog.objects.create(
+        user=None,
+        action="LOGIN_FAILED",
+        status="failed",
+        ip_address=get_client_ip(request),
+        details=f"Failed login attempt for username: {credentials.get('username')}",
+    )
 
 
 # Login view

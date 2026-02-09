@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Incident #{{ incident.id }}{%endblock %}
+{% block title %}Incident #{{ incident.id }}{% endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col s12">
@@ -7,59 +8,60 @@
 
     <div class="card">
       <div class="card-content">
+
+        <!-- Malicious URL -->
         <div class="row">
           <div class="col s12">
             <p><strong>Malicious URL:</strong></p>
             <p>
-              <a
-                href="{{ incident.malicious_url }}"
-                target="_blank"
-                class="blue-text"
-                >{{ incident.malicious_url }}</a
-              >
+              <a href="{{ incident.malicious_url }}" target="_blank" class="blue-text">
+                {{ incident.malicious_url }}
+              </a>
             </p>
           </div>
         </div>
 
+        <!-- Severity & Status -->
         <div class="row">
           <div class="col s12 m6">
             <p>
               <strong>Severity:</strong>
-              <span
-                class="badge {% if incident.severity == 'CRITICAL' %}red {% elif incident.severity == 'HIGH' %}orange {% elif incident.severity == 'MEDIUM' %}yellow black-text {% else %}green {% endif %}"
-              >
+              <span class="badge white-text
+                {% if incident.severity == 'CRITICAL' %}red
+                {% elif incident.severity == 'HIGH' %}orange
+                {% elif incident.severity == 'MEDIUM' %}amber
+                {% else %}green{% endif %}">
                 {{ incident.get_severity_display }}
               </span>
             </p>
           </div>
+
           <div class="col s12 m6">
             <p>
               <strong>Status:</strong>
               {% if incident.is_active %}
-              <span class="badge green">Active</span>
+                <span class="badge green white-text">Active</span>
               {% else %}
-              <span class="badge grey">Inactive</span>
+                <span class="badge grey darken-1 white-text">Inactive</span>
               {% endif %}
             </p>
           </div>
         </div>
 
+        <!-- HTTP Response -->
         <div class="row">
           <div class="col s12">
             <p><strong>HTTP Response:</strong></p>
-            <pre
-              style="
-                background: #f5f5f5;
-                padding: 10px;
-                border-radius: 4px;
-                overflow-x: auto;
-              "
-            >
-{{ incident.http_response }}</pre
-            >
+            <pre style="
+              background: #f5f5f5;
+              padding: 10px;
+              border-radius: 4px;
+              overflow-x: auto;
+            ">{{ incident.http_response }}</pre>
           </div>
         </div>
 
+        <!-- Description -->
         <div class="row">
           <div class="col s12">
             <p><strong>Description:</strong></p>
@@ -67,6 +69,7 @@
           </div>
         </div>
 
+        <!-- Screenshot -->
         {% if incident.screenshot %}
         <div class="row">
           <div class="col s12">
@@ -85,52 +88,44 @@
         </div>
         {% endif %}
 
+        <!-- Meta info -->
         <div class="row">
           <div class="col s12 m6">
-            <p>
-              <strong>Created By:</strong> {{ incident.created_by.username }}
-            </p>
+            <p><strong>Created By:</strong> {{ incident.created_by.username }}</p>
           </div>
           <div class="col s12 m6">
-            <p>
-              <strong>Created At:</strong> {{ incident.created_at|date:"M d, YH:i" }}
-            </p>
+            <p><strong>Created At:</strong> {{ incident.created_at|date:"M d, Y H:i" }}</p>
           </div>
         </div>
 
         {% if incident.updated_at %}
         <div class="row">
           <div class="col s12">
-            <p>
-              <strong>Last Updated:</strong> {{ incident.updated_at|date:"M d, YH:i" }}
-            </p>
+            <p><strong>Last Updated:</strong> {{ incident.updated_at|date:"M d, Y H:i" }}</p>
           </div>
         </div>
         {% endif %}
       </div>
 
+      <!-- Actions -->
       <div class="card-action">
-        <a href="{% url 'incident_list' %}" class="btn blue darken-2"
-          >Back to List</a
-        >
+        <a href="{% url 'incident_list' %}" class="btn blue darken-2">Back to List</a>
+
         {% if user.is_superuser %}
-        <a href="{% url 'incident_update' incident.pk %}" class="btn orange"
-          >Edit</a
-        >
-        <a href="{% url 'incident_delete' incident.pk %}" class="btn red"
-          >Delete</a
-        >
+          <a href="{% url 'incident_update' incident.pk %}" class="btn orange">Edit</a>
+          <a href="{% url 'incident_delete' incident.pk %}" class="btn red">Delete</a>
         {% endif %}
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var elems = document.querySelectorAll(".materialboxed")
-    var instances = M.Materialbox.init(elems)
-  })
+    var elems = document.querySelectorAll(".materialboxed");
+    M.Materialbox.init(elems);
+  });
 </script>
-{% endblock %} {% endblock %}
+{% endblock %}

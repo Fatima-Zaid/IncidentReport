@@ -144,6 +144,7 @@ class IncidentUpdateForm(forms.ModelForm):
             'http_response': forms.Textarea(attrs={'class': 'materialize-textarea', 'rows': 4}),
             'description': forms.Textarea(attrs={'class': 'materialize-textarea', 'rows': 6}),
             'severity': forms.Select(attrs={'class': 'browser-default'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'filled-in'}),  # checkbox for admin
         }
         labels = {
             'malicious_url': 'Malicious URL',
@@ -154,13 +155,14 @@ class IncidentUpdateForm(forms.ModelForm):
             'is_active': 'Active Status',
         }
 
-    # Use the same validation methods as IncidentForm
+    # Keep all clean methods from IncidentForm
     def clean_malicious_url(self):
         url = self.cleaned_data.get('malicious_url')
         if not url:
             raise ValidationError('URL is required.')
         if not url.startswith(('http://', 'https://')):
             raise ValidationError('URL must start with http:// or https://')
+        import bleach
         url = bleach.clean(url, tags=[], strip=True)
         if len(url) > 500:
             raise ValidationError('URL is too long. Maximum 500 characters.')
@@ -171,6 +173,7 @@ class IncidentUpdateForm(forms.ModelForm):
         if not http_response or http_response.strip() == '':
             raise ValidationError('HTTP Response is required.')
         allowed_tags = ['p', 'br', 'strong', 'em', 'code', 'pre']
+        import bleach
         http_response = bleach.clean(http_response, tags=allowed_tags, strip=True)
         if len(http_response) > 10000:
             raise ValidationError('HTTP Response is too long. Maximum 10,000 characters.')
@@ -180,6 +183,7 @@ class IncidentUpdateForm(forms.ModelForm):
         description = self.cleaned_data.get('description')
         if not description or description.strip() == '':
             raise ValidationError('Description is required.')
+        import bleach
         description = bleach.clean(description, tags=[], strip=True)
         if len(description) < 10:
             raise ValidationError('Description must be at least 10 characters long.')
