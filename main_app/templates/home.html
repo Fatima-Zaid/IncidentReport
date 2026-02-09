@@ -20,13 +20,110 @@
         </div>
       </div>
 
+      <!-- Action Cards -->
+      <div class="row" style="margin-top: 40px;">
+        {% if user.is_superuser %}
+          <!-- Admin Actions -->
+          <div class="col s12 m6 l4">
+            <div class="card hoverable">
+              <div class="card-content center-align">
+                <i class="material-icons large blue-text text-darken-2">list</i>
+                <h5>All Incidents</h5>
+                <p>View and manage all incidents from all users.</p>
+              </div>
+              <div class="card-action center-align">
+                <a href="{% url 'incident_list' %}" class="btn blue darken-2 waves-effect waves-light">
+                  <i class="material-icons left">visibility</i>View All
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12 m6 l4">
+            <div class="card hoverable">
+              <div class="card-content center-align">
+                <i class="material-icons large orange-text">admin_panel_settings</i>
+                <h5>Admin Panel</h5>
+                <p>Access the Django admin panel for system management.</p>
+              </div>
+              <div class="card-action center-align">
+                <a href="/admin/" class="btn orange waves-effect waves-light">
+                  <i class="material-icons left">settings</i>Admin Panel
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12 m6 l4">
+            <div class="card hoverable">
+              <div class="card-content center-align">
+                <i class="material-icons large green-text">people</i>
+                <h5>User Management</h5>
+                <p>View and manage all system users.</p>
+              </div>
+              <div class="card-action center-align">
+                <a href="/admin/auth/user/" class="btn green waves-effect waves-light">
+                  <i class="material-icons left">people</i>Manage Users
+                </a>
+              </div>
+            </div>
+          </div>
+
+        {% else %}
+          <!-- Regular User Actions -->
+          <div class="col s12 m6">
+            <div class="card hoverable">
+              <div class="card-content center-align">
+                <i class="material-icons large blue-text text-darken-2">add_circle</i>
+                <h5>Create Incident</h5>
+                <p>Report a new cybersecurity incident with details and screenshots.</p>
+              </div>
+              <div class="card-action center-align">
+                <a href="{% url 'incident_create' %}" class="btn blue darken-2 waves-effect waves-light">
+                  <i class="material-icons left">add</i>New Incident
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12 m6">
+            <div class="card hoverable">
+              <div class="card-content center-align">
+                <i class="material-icons large blue-text text-darken-2">list</i>
+                <h5>My Incidents</h5>
+                <p>View and manage all your reported incidents.</p>
+              </div>
+              <div class="card-action center-align">
+                <a href="{% url 'incident_list' %}" class="btn blue darken-2 waves-effect waves-light">
+                  <i class="material-icons left">visibility</i>View My Incidents
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Statistics Section (Optional - can be expanded later) -->
+      {% if user.is_superuser %}
+      <div class="row" style="margin-top: 20px;">
+        <div class="col s12">
+          <div class="card blue darken-2 white-text">
+            <div class="card-content">
+              <span class="card-title">Quick Stats</span>
+              <p>System statistics and overview will be displayed here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
     {% else %}
       <!-- Not logged in users -->
       <div class="card">
         <div class="card-content center-align">
           <h3 class="blue-text text-darken-2">Incident Reporting System</h3>
-          <p class="flow-text">Report and manage incidents efficiently</p>
-          <p>Track, monitor, and resolve incidents in real-time. Our system helps you maintain a safe and organized environment.</p>
+          <p class="flow-text">Report and manage cybersecurity incidents efficiently</p>
+          <p>Track, monitor, and resolve security incidents in real-time. Our system helps you maintain a safe and organized environment.</p>
 
           <div style="margin-top: 40px;">
             <a href="{% url 'register' %}" class="btn-large blue darken-2 waves-effect waves-light" style="margin: 10px;">
@@ -41,31 +138,60 @@
 
       <div class="row" style="margin-top: 40px;">
         <div class="col s12 m4">
-          <div class="card">
+          <div class="card hoverable">
             <div class="card-content center-align">
               <i class="material-icons large blue-text text-darken-2">report_problem</i>
               <h5>Report Incidents</h5>
-              <p>Quickly report any incidents with detailed information.</p>
+              <p>Quickly report cybersecurity incidents with detailed information and evidence.</p>
             </div>
           </div>
         </div>
 
         <div class="col s12 m4">
-          <div class="card">
+          <div class="card hoverable">
             <div class="card-content center-align">
               <i class="material-icons large blue-text text-darken-2">track_changes</i>
               <h5>Track Progress</h5>
-              <p>Monitor the status of all reported incidents in real-time.</p>
+              <p>Monitor the status of all reported incidents in real-time with detailed tracking.</p>
             </div>
           </div>
         </div>
 
         <div class="col s12 m4">
-          <div class="card">
+          <div class="card hoverable">
             <div class="card-content center-align">
               <i class="material-icons large blue-text text-darken-2">admin_panel_settings</i>
               <h5>Manage & Resolve</h5>
-              <p>Admins can manage and resolve incidents efficiently.</p>
+              <p>Admins can efficiently manage, update, and resolve security incidents.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="row" style="margin-top: 20px;">
+        <div class="col s12">
+          <div class="card blue darken-2 white-text">
+            <div class="card-content center-align">
+              <h5>Why Use Our System?</h5>
+              <div class="row">
+                <div class="col s12 m3">
+                  <i class="material-icons medium">security</i>
+                  <p>Secure & Encrypted</p>
+                </div>
+                <div class="col s12 m3">
+                  <i class="material-icons medium">speed</i>
+                  <p>Fast Reporting</p>
+                </div>
+                <div class="col s12 m3">
+                  <i class="material-icons medium">verified_user</i>
+                  <p>Role-Based Access</p>
+                </div>
+                <div class="col s12 m3">
+                  <i class="material-icons medium">history</i>
+                  <p>Audit Logging</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
