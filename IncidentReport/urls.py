@@ -17,6 +17,18 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.decorators import user_passes_test
+
+
+def superuser_required(view_func):
+    decorated_view_func = user_passes_test(
+        lambda u: u.is_active and u.is_superuser, login_url="/"
+    )(view_func)
+    return decorated_view_func
+
+
+# Wrap admin site
+admin.site.login = superuser_required(admin.site.login)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

@@ -11,8 +11,8 @@ class Incident(models.Model):
         ('CRITICAL', 'Critical'),
     ]
 
-    malicious_url = models.URLField()
-    http_response = models.PositiveSmallIntegerField()
+    malicious_url = models.URLField(max_length=500)  # Added max_length for long URLs
+    http_response = models.TextField()  # Changed to TextField to store full HTTP response content
 
     description = models.TextField()
 
@@ -37,6 +37,7 @@ class Incident(models.Model):
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # Added to track updates
 
     def __str__(self):
         return f"Incident {self.id} - {self.severity}"
@@ -51,11 +52,13 @@ class Incident(models.Model):
 
 class AuditLog(models.Model):
     ACTION_CHOICES = [
-        ('LOGIN', 'Login'),
+        ('LOGIN_SUCCESS', 'Login Success'),
+        ('LOGIN_FAILED', 'Login Failed'),
         ('LOGOUT', 'Logout'),
         ('CREATE', 'Create Incident'),
         ('UPDATE', 'Update Incident'),
         ('DELETE', 'Delete Incident'),
+        ('VIEW', 'View Incident'),
     ]
 
     user = models.ForeignKey(
@@ -86,5 +89,10 @@ class AuditLog(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    details = models.TextField(null=True, blank=True)
+
     def __str__(self):
-        return f"{self.action} - {self.status}"
+        return f"{self.user} - {self.action} - {self.status} at {self.timestamp}"
+
+    class Meta:
+        ordering = ['-timestamp']

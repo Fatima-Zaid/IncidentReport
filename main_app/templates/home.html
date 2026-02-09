@@ -1,3 +1,77 @@
-{% extends 'base.html' %} {% block content %}
-<h1>Hello !!!!!!!</h1>
+{% extends 'base.html' %}
+
+{% block title %}Home - Incident Reporting System{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col s12">
+
+    {% if user.is_authenticated %}
+      <!-- Logged in users -->
+      <div class="card">
+        <div class="card-content center-align">
+          {% if user.is_superuser %}
+            <h3 class="blue-text text-darken-2">Welcome Admin!</h3>
+            <p class="flow-text">You have full access to the system.</p>
+          {% else %}
+            <h3 class="blue-text text-darken-2">Hello, {{ user.username }}!</h3>
+            <p class="flow-text">Welcome to the Incident Reporting System.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    {% else %}
+      <!-- Not logged in users -->
+      <div class="card">
+        <div class="card-content center-align">
+          <h3 class="blue-text text-darken-2">Incident Reporting System</h3>
+          <p class="flow-text">Report and manage incidents efficiently</p>
+          <p>Track, monitor, and resolve incidents in real-time. Our system helps you maintain a safe and organized environment.</p>
+
+          <div style="margin-top: 40px;">
+            <a href="{% url 'register' %}" class="btn-large blue darken-2 waves-effect waves-light" style="margin: 10px;">
+              <i class="material-icons left">person_add</i>Register
+            </a>
+            <a href="{% url 'login' %}" class="btn-large blue darken-2 waves-effect waves-light" style="margin: 10px;">
+              <i class="material-icons left">login</i>Login
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 40px;">
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-content center-align">
+              <i class="material-icons large blue-text text-darken-2">report_problem</i>
+              <h5>Report Incidents</h5>
+              <p>Quickly report any incidents with detailed information.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-content center-align">
+              <i class="material-icons large blue-text text-darken-2">track_changes</i>
+              <h5>Track Progress</h5>
+              <p>Monitor the status of all reported incidents in real-time.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-content center-align">
+              <i class="material-icons large blue-text text-darken-2">admin_panel_settings</i>
+              <h5>Manage & Resolve</h5>
+              <p>Admins can manage and resolve incidents efficiently.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
 {% endblock %}
