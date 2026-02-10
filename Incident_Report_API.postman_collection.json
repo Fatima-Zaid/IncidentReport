@@ -1,0 +1,484 @@
+{
+	"info": {
+		"name": "Incident Report API",
+		"description": "Complete API collection for Cybersecurity Incident Reporting System with JWT Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "incident_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"access_token\", jsonData.tokens.access);",
+									"    pm.collectionVariables.set(\"refresh_token\", jsonData.tokens.refresh);",
+									"    console.log(\"Tokens saved:\", jsonData.tokens.access);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"testuser@example.com\",\n    \"password\": \"SecurePassword123!\",\n    \"password2\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register", ""]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"access_token\", jsonData.tokens.access);",
+									"    pm.collectionVariables.set(\"refresh_token\", jsonData.tokens.refresh);",
+									"    console.log(\"Access Token:\", jsonData.tokens.access);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login", ""]
+						},
+						"description": "Login and receive JWT tokens"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me", ""]
+						},
+						"description": "Get currently authenticated user details"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"access_token\", jsonData.access);",
+									"    console.log(\"New Access Token:\", jsonData.access);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/token/refresh/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "token", "refresh", ""]
+						},
+						"description": "Get a new access token using refresh token"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout", ""]
+						},
+						"description": "Logout and blacklist refresh token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and token management"
+		},
+		{
+			"name": "Incidents",
+			"item": [
+				{
+					"name": "List All Incidents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/incidents/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", ""]
+						},
+						"description": "Get all incidents (filtered by role: users see own, admins see all)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Incidents with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/incidents/?severity=HIGH&date_from=2024-01-01",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", ""],
+							"query": [
+								{
+									"key": "severity",
+									"value": "HIGH",
+									"description": "Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"
+								},
+								{
+									"key": "date_from",
+									"value": "2024-01-01",
+									"description": "Filter from date (YYYY-MM-DD)"
+								},
+								{
+									"key": "date_to",
+									"value": null,
+									"description": "Filter to date (YYYY-MM-DD)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get incidents with optional filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Incident",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"incident_id\", jsonData.id);",
+									"    console.log(\"Incident created with ID:\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"malicious_url\": \"https://malicious-site.example.com/phishing\",\n    \"http_response\": \"HTTP/1.1 200 OK\\nContent-Type: text/html\\n\\n<html>Phishing page detected</html>\",\n    \"description\": \"Detected phishing website attempting to steal user credentials. The site mimics a legitimate login page.\",\n    \"severity\": \"HIGH\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/incidents/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", ""]
+						},
+						"description": "Create a new incident report"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Incident with Screenshot",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "malicious_url",
+									"value": "https://malware-domain.example.com",
+									"type": "text"
+								},
+								{
+									"key": "http_response",
+									"value": "HTTP/1.1 200 OK\nContent-Type: application/octet-stream\n\nMalware binary detected",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Malware distribution site detected. Binary file triggers antivirus alerts.",
+									"type": "text"
+								},
+								{
+									"key": "severity",
+									"value": "CRITICAL",
+									"type": "text"
+								},
+								{
+									"key": "screenshot",
+									"type": "file",
+									"src": [],
+									"description": "Upload screenshot file (JPG, PNG, GIF - max 5MB)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/incidents/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", ""]
+						},
+						"description": "Create incident with file upload (use form-data)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Incident by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/incidents/{{incident_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", "{{incident_id}}", ""]
+						},
+						"description": "Get specific incident details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Incident (Admin Only)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"malicious_url\": \"https://malicious-site.example.com/phishing\",\n    \"http_response\": \"HTTP/1.1 200 OK\\nContent-Type: text/html\\n\\n<html>Updated phishing page detected</html>\",\n    \"description\": \"Updated: Detected phishing website with additional credential harvesting techniques.\",\n    \"severity\": \"CRITICAL\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/incidents/{{incident_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", "{{incident_id}}", ""]
+						},
+						"description": "Update entire incident (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Partial Update Incident (Admin Only)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"severity\": \"MEDIUM\",\n    \"is_active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/incidents/{{incident_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", "{{incident_id}}", ""]
+						},
+						"description": "Partially update incident fields (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Incident (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/incidents/{{incident_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["incidents", "{{incident_id}}", ""]
+						},
+						"description": "Delete an incident (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Incident management endpoints for CRUD operations"
+		},
+		{
+			"name": "Audit Logs (Admin Only)",
+			"item": [
+				{
+					"name": "List All Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit-logs/",
+							"host": ["{{base_url}}"],
+							"path": ["audit-logs", ""]
+						},
+						"description": "Get all audit logs (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Audit Logs with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit-logs/?action=CREATE&status=success",
+							"host": ["{{base_url}}"],
+							"path": ["audit-logs", ""],
+							"query": [
+								{
+									"key": "action",
+									"value": "CREATE",
+									"description": "Filter by action (LOGIN_SUCCESS, CREATE, UPDATE, DELETE, etc.)"
+								},
+								{
+									"key": "status",
+									"value": "success",
+									"description": "Filter by status (success/failed)"
+								},
+								{
+									"key": "user_id",
+									"value": null,
+									"description": "Filter by user ID",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get audit logs with filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Audit Log by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/audit-logs/1/",
+							"host": ["{{base_url}}"],
+							"path": ["audit-logs", "1", ""]
+						},
+						"description": "Get specific audit log details (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Audit log viewing endpoints (admin only)"
+		}
+	]
+}
