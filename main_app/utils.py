@@ -16,14 +16,16 @@ def create_audit_log(user, action, status, incident=None, request=None, details=
     Create an audit log entry
 
     Args:
-        user: User object or None
-        action: One of ACTION_CHOICES
-        status: 'success' or 'failed'
-        incident: Incident object (optional)
-        request: HttpRequest object (optional)
-        details: Additional details (optional)
+        user: User object (can be None for failed login attempts)
+        action: Action performed (from AuditLog.ACTION_CHOICES)
+        status: Status of the action (success/failed)
+        incident: Related incident object (optional)
+        request: Django request object (optional, for IP extraction)
+        details: Additional details text (optional)
     """
-    ip_address = get_client_ip(request) if request else None
+    ip_address = None
+    if request:
+        ip_address = get_client_ip(request)
 
     AuditLog.objects.create(
         user=user,

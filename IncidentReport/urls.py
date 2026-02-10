@@ -34,6 +34,7 @@ admin.site.login = superuser_required(admin.site.login)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/", include("main_app.api_urls")),  # API routes (NEW - ADD THIS LINE)
     path("", include("main_app.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
 ]
